@@ -1,0 +1,317 @@
+dotnet add package RestSharp
+dotnet add package HtmlAgilityPack
+
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using HtmlAgilityPack;
+using RestSharp;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        Console.WriteLine("OSINT Program Started");
+
+        // Example 1: Fetch GitHub user info via API
+        string githubUsername = "octocat"; // replace with any GitHub username
+        var githubData = await FetchGitHubUserInfo(githubUsername);
+        Console.WriteLine($"GitHub User Info for {githubUsername}:");
+        Console.WriteLine(githubData);
+
+        // Example 2: Scrape news website for titles
+        string url = "https://news.ycombinator.com/"; // replace with any news website URL
+        var titles = ScrapeNewsTitles(url);
+        Console.WriteLine("News Titles:");
+        foreach (var title in titles)
+        {
+            Console.WriteLine(title);
+        }
+    }
+
+    // Method to fetch GitHub user info
+    static async Task<string> FetchGitHubUserInfo(string username)
+    {
+        var client = new RestClient($"https://api.github.com/users/{username}");
+        var request = new RestRequest(Method.GET);
+        request.AddHeader("User-Agent", "OSINT-Program");
+        
+        IRestResponse response = await client.ExecuteAsync(request);
+        return response.Content;
+    }
+
+    // Method to scrape news titles from a website
+    static string[] ScrapeNewsTitles(string url)
+    {
+        var web = new HtmlWeb();
+        var doc = web.Load(url);
+
+        var titles = doc.DocumentNode.SelectNodes("//a[@class='storylink']");
+        if (titles == null) return new string[] { };
+
+        string[] result = new string[titles.Count];
+        for (int i = 0; i < titles.Count; i++)
+        {
+            result[i] = titles[i].InnerText;
+        }
+
+        return result;
+    }
+}
+
+
+dotnet add package RestSharp
+dotnet add package HtmlAgilityPack
+dotnet add package Newtonsoft.Json
+
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+using HtmlAgilityPack;
+using RestSharp;
+using Newtonsoft.Json.Linq;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        Console.WriteLine("OSINT Program Started");
+
+        // Example 1: Fetch GitHub user info via API
+        string githubUsername = "octocat"; // replace with any GitHub username
+        var githubData = await FetchGitHubUserInfo(githubUsername);
+        Console.WriteLine($"GitHub User Info for {githubUsername}:");
+        Console.WriteLine(githubData);
+
+        // Example 2: Scrape news website for titles
+        string newsUrl = "https://news.ycombinator.com/"; // replace with any news website URL
+        var titles = ScrapeNewsTitles(newsUrl);
+        Console.WriteLine("News Titles:");
+        foreach (var title in titles)
+        {
+            Console.WriteLine(title);
+        }
+
+        // Example 3: Fetch IP Address information
+        string ipAddress = "8.8.8.8"; // replace with any IP address
+        var ipInfo = await FetchIPInformation(ipAddress);
+        Console.WriteLine($"IP Address Information for {ipAddress}:");
+        Console.WriteLine(ipInfo);
+
+        // Example 4: Fetch weather information
+        string city = "New York"; // replace with any city
+        var weatherInfo = await FetchWeatherInformation(city);
+        Console.WriteLine($"Weather Information for {city}:");
+        Console.WriteLine(weatherInfo);
+    }
+
+    // Method to fetch GitHub user info
+    static async Task<string> FetchGitHubUserInfo(string username)
+    {
+        var client = new RestClient($"https://api.github.com/users/{username}");
+        var request = new RestRequest(Method.GET);
+        request.AddHeader("User-Agent", "OSINT-Program");
+        
+        IRestResponse response = await client.ExecuteAsync(request);
+        return response.Content;
+    }
+
+    // Method to scrape news titles from a website
+    static string[] ScrapeNewsTitles(string url)
+    {
+        var web = new HtmlWeb();
+        var doc = web.Load(url);
+
+        var titles = doc.DocumentNode.SelectNodes("//a[@class='storylink']");
+        if (titles == null) return new string[] { };
+
+        string[] result = new string[titles.Count];
+        for (int i = 0; i < titles.Count; i++)
+        {
+            result[i] = titles[i].InnerText;
+        }
+
+        return result;
+    }
+
+    // Method to fetch IP address information
+    static async Task<string> FetchIPInformation(string ipAddress)
+    {
+        var client = new RestClient($"https://ipinfo.io/{ipAddress}/json");
+        var request = new RestRequest(Method.GET);
+        
+        IRestResponse response = await client.ExecuteAsync(request);
+        var content = response.Content;
+        
+        var json = JObject.Parse(content);
+        return json.ToString();
+    }
+
+    // Method to fetch weather information
+    static async Task<string> FetchWeatherInformation(string city)
+    {
+        string apiKey = "your_weather_api_key"; // replace with your API key
+        var client = new RestClient($"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={apiKey}&units=metric");
+        var request = new RestRequest(Method.GET);
+        
+        IRestResponse response = await client.ExecuteAsync(request);
+        var content = response.Content;
+        
+        var json = JObject.Parse(content);
+        var weatherDescription = json["weather"]?[0]["description"]?.ToString() ?? "No description";
+        var temperature = json["main"]?["temp"]?.ToString() ?? "No temperature data";
+        
+        return $"Weather: {weatherDescription}, Temperature: {temperature}°C";
+    }
+}
+
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using HtmlAgilityPack;
+using RestSharp;
+using Newtonsoft.Json.Linq;
+using Whois.NET;
+using Flurl.Http;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        Console.WriteLine("OSINT Program Started");
+
+        // Example 1: Fetch GitHub user info via API
+        string githubUsername = "octocat"; // replace with any GitHub username
+        var githubData = await FetchGitHubUserInfo(githubUsername);
+        Console.WriteLine($"GitHub User Info for {githubUsername}:");
+        Console.WriteLine(githubData);
+
+  string newsUrl = "https://news.ycombinator.com/"; // replace with any news website URL
+        var titles = ScrapeNewsTitles(newsUrl);
+        Console.WriteLine("News Titles:");
+        foreach (var title in titles)
+        {
+            Console.WriteLine(title);
+        }
+
+        // Example 3: Fetch IP Address information
+        string ipAddress = "8.8.8.8"; // replace with any IP address
+        var ipInfo = await FetchIPInformation(ipAddress);
+        Console.WriteLine($"IP Address Information for {ipAddress}:");
+        Console.WriteLine(ipInfo);
+
+        // Example 4: Fetch weather information
+        string city = "New York"; // replace with any city
+        var weatherInfo = await FetchWeatherInformation(city);
+        Console.WriteLine($"Weather Information for {city}:");
+        Console.WriteLine(weatherInfo);
+
+        // Example 5: Fetch Twitter profile info
+        string twitterUsername = "jack"; // replace with any Twitter username
+        var twitterData = await FetchTwitterProfileInfo(twitterUsername);
+        Console.WriteLine($"Twitter Profile Info for {twitterUsername}:");
+        Console.WriteLine(twitterData);
+
+        // Example 6: Perform WHOIS lookup
+        string domain = "example.com"; // replace with any domain
+        var whoisData = await FetchWhoisInformation(domain);
+        Console.WriteLine($"WHOIS Information for {domain}:");
+        Console.WriteLine(whoisData);
+$"Reverse Image Search Results for {imageUrl}:");
+        Console.WriteLine(reverseImageData);
+    }
+
+    // Method to fetch GitHub user info
+    static async Task<string> FetchGitHubUserInfo(string username)
+    {
+        var client = new RestClient($"https://api.github.com/users/{username}");
+        var request = new RestRequest(Method.GET);
+        request.AddHeader("User-Agent", "OSINT-Program");
+        
+        IRestResponse response = await client.ExecuteAsync(request);
+        return response.Content;
+    }
+
+    // Method to scrape news titles from a website
+    static string[] ScrapeNewsTitles(string url)
+    {
+        var web = new HtmlWeb();
+        var doc = web.Load(url);
+
+        var titles = doc.DocumentNode.SelectNodes("//a[@class='storylink']");
+        if (titles == null) return new string[] { };
+
+        string[] result = new string[titles.Count];
+        for (int i = 0; i < titles.Count; i++)
+        {
+            result[i] = titles[i].InnerText;
+        }
+
+        return result;
+    }
+
+    // Method to fetch IP address information
+    static async Task<string> FetchIPInformation(string ipAddress)
+    {
+        var client = new RestClient($"https://ipinfo.io/{ipAddress}/json");
+        var request = new RestRequest(Method.GET);
+        
+        IRestResponse response = await client.ExecuteAsync(request);
+        var content = response.Content;
+        
+        var json = JObject.Parse(content);
+        return json.ToString();
+    }
+
+    // Method to fetch weather information
+    static async Task<string> FetchWeatherInformation(string city)
+    {
+        string apiKey = "your_weather_api_key"; // replace with your API key
+        var client = new RestClient($"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={apiKey}&units=metric");
+        var request = new RestRequest(Method.GET);
+        
+        IRestResponse response = await client.ExecuteAsync(request);
+        var content = response.Content;
+        
+        var json = JObject.Parse(content);
+        var weatherDescription = json["weather"]?[0]["description"]?.ToString() ?? "No description";
+        var temperature = json["main"]?["temp"]?.ToString() ?? "No temperature data";
+        
+        return $"Weather: {weatherDescription}, Temperature: {temperature}°C";
+    }
+
+    // Method to fetch Twitter profile info
+    static async Task<string> FetchTwitterProfileInfo(string username)
+    {
+        string bearerToken = "your_twitter_bearer_token"; // replace with your Twitter API bearer token
+        var response = await $"https://api.twitter.com/2/users/by/username/{username}"
+        // Example 7: Perform reverse image search
+        string imageUrl = "https://example.com/image.jpg"; // replace with any image URL
+        var reverseImageData = await PerformReverseImageSearch(imageUrl);
+        Console.WriteLine(
+  .WithOAuthBearerToken(bearerToken)
+            .GetAsync();
+
+        var content = await response.Content.ReadAsStringAsync();
+        return content;
+    }
+
+    // Method to perform WHOIS lookup
+    static async Task<string> FetchWhoisInformation(string domain)
+    {
+        var whois = await WhoisClient.QueryAsync(domain);
+        return whois.Raw;
+    }
+
+    // Method to perform reverse image search
+    static async Task<string> PerformReverseImageSearch(string imageUrl)
+    {
+        string apiKey = "your_reverse_image_search_api_key"; // replace with your reverse image search API key
+        var response = await $"https://api.example.com/reverse_image_search?image_url={imageUrl}&apikey={apiKey}"
+            .GetAsync();
+
+        var content = await response.Content.ReadAsStringAsync();
+        return content;
+    }
+}
